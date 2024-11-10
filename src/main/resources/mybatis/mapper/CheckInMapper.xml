@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.mafangui.hotel.mapper.CheckInMapper">
+  <resultMap id="BaseResultMap" type="cn.mafangui.hotel.entity.CheckIn">
+    <id column="check_in_id" jdbcType="INTEGER" property="checkInId" />
+    <result column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="room_number" jdbcType="VARCHAR" property="roomNumber" />
+    <result column="peo_count" jdbcType="INTEGER" property="peoCount" />
+    <result column="persons" jdbcType="VARCHAR" property="persons" />
+    <result column="ids" jdbcType="VARCHAR" property="ids" />
+    <result column="check_in_time" jdbcType="TIMESTAMP" property="checkInTime" />
+    <result column="check_out_time" jdbcType="TIMESTAMP" property="checkOutTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    check_in_id, order_id, room_number,peo_count, persons, ids, check_in_time, check_out_time,
+    create_time, update_time
+  </sql>
+
+  <select id="getCount" resultType="java.lang.Integer">
+    select count(check_in_id) from check_in
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from check_in
+    where check_in_id = #{checkInId,jdbcType=INTEGER}
+  </select>
+  <select id="selectLatestByRoomNumber" parameterType="String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from check_in
+    where room_number = #{roomNumber,jdbcType=VARCHAR} order by check_in_time desc limit 1
+  </select>
+  <select id="selectAll"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from check_in
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from check_in
+    where check_in_id = #{checkInId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.mafangui.hotel.entity.CheckIn">
+    insert into check_in (check_in_id, order_id, room_id, room_number,
+     peo_count, persons,
+      ids, check_in_time, create_time,
+      update_time)
+    values (#{checkInId,jdbcType=INTEGER}, #{orderId,jdbcType=INTEGER},#{roomId,jdbcType=INTEGER}, #{roomNumber,jdbcType=VARCHAR},
+       #{peoCount,jdbcType=INTEGER}, #{persons,jdbcType=VARCHAR},
+      #{ids,jdbcType=VARCHAR}, now(), now(),now())
+  </insert>
+  <insert id="insertSelective" parameterType="cn.mafangui.hotel.entity.CheckIn">
+    insert into check_in
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="checkInId != null">
+        check_in_id,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="roomNumber != null">
+        room_number,
+      </if>
+      <if test="peoCount != null">
+        peo_count,
+      </if>
+      <if test="persons != null">
+        persons,
+      </if>
+      <if test="ids != null">
+        ids,
+      </if>
+      <if test="checkInTime != null">
+        check_in_time,
+      </if>
+        create_time,
+        update_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="checkInId != null">
+        #{checkInId,jdbcType=INTEGER},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="roomNumber != null">
+        #{roomNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="peoCount != null">
+        #{peoCount,jdbcType=INTEGER},
+      </if>
+      <if test="persons != null">
+        #{persons,jdbcType=VARCHAR},
+      </if>
+      <if test="ids != null">
+        #{ids,jdbcType=VARCHAR},
+      </if>
+      <if test="checkInTime != null">
+        #{checkInTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkOutTime != null">
+        #{checkOutTime,jdbcType=TIMESTAMP},
+      </if>
+      now(),
+      now(),
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.mafangui.hotel.entity.CheckIn">
+    update check_in
+    <set>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="roomNumber != null">
+        room_number = #{roomNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="peoCount != null">
+        peo_count = #{peoCount,jdbcType=INTEGER},
+      </if>
+      <if test="persons != null">
+        persons = #{persons,jdbcType=VARCHAR},
+      </if>
+      <if test="ids != null">
+        ids = #{ids,jdbcType=VARCHAR},
+      </if>
+      <if test="checkInTime != null">
+        check_in_time = #{checkInTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkOutTime != null">
+        check_out_time = #{checkOutTime,jdbcType=TIMESTAMP},
+      </if>
+        update_time = now(),
+    </set>
+    where check_in_id = #{checkInId,jdbcType=INTEGER}
+  </update>
+  <update id="checkOut" parameterType="Integer">
+    update check_in
+    set
+      check_out_time = now(),
+      update_time = now()
+    where check_in_id = #{checkInId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByRoomNumber" parameterType="String">
+    update check_in
+    set
+      check_out_time = now(),
+      update_time = now()
+    where room_number = #{roomNumber,jdbcType=VARCHAR} and check_out_time = '0000-00-00 00:00:00'
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.mafangui.hotel.entity.CheckIn">
+    update check_in
+    set order_id = #{orderId,jdbcType=INTEGER},
+      room_number = #{roomNumber,jdbcType=VARCHAR},
+      peo_count = #{peoCount,jdbcType=INTEGER},
+      persons = #{persons,jdbcType=VARCHAR},
+      ids = #{ids,jdbcType=VARCHAR},
+      check_in_time = #{checkInTime,jdbcType=TIMESTAMP},
+      check_out_time = #{checkOutTime,jdbcType=TIMESTAMP},
+      update_time = now()
+    where check_in_id = #{checkInId,jdbcType=INTEGER}
+  </update>
+</mapper>

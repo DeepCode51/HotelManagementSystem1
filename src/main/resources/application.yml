@@ -1,0 +1,15 @@
+server:
+  port: 8080
+  servlet:
+    context-path: "/ho-api"
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: 123456
+    url: jdbc:mysql://localhost:3306/graduation_278_hotel?characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+mybatis-plus:
+  type-aliases-package: classpath*:cn.mafangui.hotel.entity
+  mapper-locations: classpath*:mybatis/mapper/*.xml
+

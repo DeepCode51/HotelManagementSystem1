@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.mafangui.hotel.mapper.StatisticsMapper">
+
+    <select id="getRoomType" resultType="cn.mafangui.hotel.entity.RoomType">
+        SELECT * from room_type GROUP BY type_id
+    </select>
+
+    <select id="getAllRoom" resultType="cn.mafangui.hotel.entity.Room">
+        select * from room_info
+    </select>
+
+    <select id="orderVolumeStatistics" resultType="map">
+        select date_format(create_time,"%Y-%m") as days,count(1) as orderNum from order_info
+        where  create_time > date_add(now(),interval -6 month) and order_status in (1,2)
+        group by date_format(create_time,"%Y-%m")
+    </select>
+
+    <select id="roomAccommodationDtatistics" resultType="map">
+        select date_format(check_in_time,"%Y-%m") as days,count(1) as checkinNum from check_in
+        where  check_in_time > date_add(now(),interval -12 month)
+        group by date_format(check_in_time,"%Y-%m")
+    </select>
+
+    <select id="orderAll" resultType="cn.mafangui.hotel.entity.Order">
+        SELECT * from order_info WHERE order_status in (1,2)
+    </select>
+</mapper>
